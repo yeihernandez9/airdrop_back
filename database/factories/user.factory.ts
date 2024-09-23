@@ -1,9 +1,9 @@
-import { User } from '../../src/modules/user/user.entity';
+import { UserEntity } from '../../src/modules/user/user.entity';
 import { setSeederFactory } from 'typeorm-extension';
 import { hash } from 'bcrypt';
 
-export default setSeederFactory(User, async (faker) => {
-  const user = new User();
+export default setSeederFactory(UserEntity, async (faker) => {
+  const user = new UserEntity();
 
   /*user.username = faker.name.firstName();
   user.email = faker.name.lastName();

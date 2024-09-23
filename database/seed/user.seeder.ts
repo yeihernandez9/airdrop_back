@@ -1,6 +1,6 @@
 import { hash } from 'bcrypt';
 //import { RoleType } from 'src/modules/role/roletype.enum';
-import { User } from '../../src/modules/user/user.entity';
+import { UserEntity } from '../../src/modules/user/user.entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 
@@ -9,7 +9,7 @@ export default class UserSeeder implements Seeder {
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
-    const repository = dataSource.getRepository(User);
+    const repository = dataSource.getRepository(UserEntity);
 
     const data = {
       username: 'admin',
@@ -28,7 +28,7 @@ export default class UserSeeder implements Seeder {
 
     // ---------------------------------------------------
 
-    const userFactory = await factoryManager.get(User);
+    const userFactory = await factoryManager.get(UserEntity);
 
     // Insert only one record.
     await userFactory.save();
