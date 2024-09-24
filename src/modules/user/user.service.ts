@@ -5,12 +5,16 @@ import { UserEntity } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, genSalt, hash } from 'bcrypt';
+import { RoleEntity } from '../role/role.entity';
+import { RoleType } from '../role/role.type';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly _roleRepository: Repository<RoleEntity>,
   ) {}
   async create(createUserDto: CreateUserDto) {
     const { username, email, password } = createUserDto;
@@ -25,14 +29,21 @@ export class UserService {
       throw new ConflictException('Username or Email already exist');
     }
 
+    const defaultRole: RoleEntity = await this._roleRepository.findOne({
+      where: { name: RoleType.USER },
+    });
+
     const salt = await genSalt(10);
 
     const user = new UserEntity();
     user.username = username;
     user.email = email;
     user.password = await hash(password, salt);
+    user.roles = [defaultRole];
 
     const save = this.userRepository.save(user);
+    delete user.password;
+
     console.log('SAVE#######', save);
     return {
       data: user,
@@ -40,7 +51,6 @@ export class UserService {
   }
 
   async findAll() {
-
     const users: UserEntity[] = await this.userRepository.find({
       where: { status: 'ACTIVE' },
     });

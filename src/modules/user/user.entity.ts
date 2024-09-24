@@ -4,9 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { RoleEntity } from '../role/role.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -27,9 +30,7 @@ export class UserEntity {
   @Column({ type: 'varchar', default: 'ACTIVE', length: 13 })
   status: string;
 
-  @CreateDateColumn({ name: 'createdate' })
-  createdate: Date;
-
-  @UpdateDateColumn({ name: 'updateddate' })
-  updateddate: Date;
+  @ManyToMany((type) => RoleEntity, (role) => role.users, { eager: true })
+  @JoinTable({ name: 'user_roles' })
+  roles: RoleEntity[];
 }

@@ -1,4 +1,4 @@
-import { Role } from '../../src/modules/role/entities/role.entity';
+import { RoleEntity } from '../../src/modules/role/role.entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 
@@ -7,7 +7,7 @@ export default class RoleSeeder implements Seeder {
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
-    const repository = dataSource.getRepository(Role);
+    const repository = dataSource.getRepository(RoleEntity);
 
     const data = {
       name: 'SUPER_ADMIN',
@@ -27,7 +27,7 @@ export default class RoleSeeder implements Seeder {
       status: 'ACTIVE',
     };
 
-    const roleFactory = await factoryManager.get(Role);
+    const roleFactory = await factoryManager.get(RoleEntity);
 
     // Insert only one record.
     await repository.save(data);
