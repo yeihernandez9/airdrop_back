@@ -1,12 +1,14 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { compare, genSalt, hash } from 'bcrypt';
+import { genSalt, hash } from 'bcrypt';
 import { RoleEntity } from '../role/role.entity';
 import { RoleType } from '../role/role.type';
+import { ForgotPasswordDto } from './dto/forgot-password';
+import { UserDetailsEntity } from './user.details.entity';
 
 @Injectable()
 export class UserService {
@@ -17,7 +19,7 @@ export class UserService {
     private readonly _roleRepository: Repository<RoleEntity>,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    const { username, email, password } = createUserDto;
+    const { username, email } = createUserDto;
 
     const existUser = await this.userRepository.findOne({
       where: [{ username }, { email }],
@@ -33,16 +35,23 @@ export class UserService {
       where: { name: RoleType.USER },
     });
 
-    const salt = await genSalt(10);
-
     const user = new UserEntity();
     user.username = username;
     user.email = email;
-    user.password = await hash(password, salt);
+
+    const details = new UserDetailsEntity();
+    details.name = createUserDto.name;
+    details.lastname = createUserDto.lastname;
+    details.phone = createUserDto.phone;
+
+    user.details = details;
+
+    const salt = await genSalt(10);
+    user.password = await hash(createUserDto.password, salt);
+
     user.roles = [defaultRole];
 
     const save = this.userRepository.save(user);
-    delete user.password;
 
     console.log('SAVE#######', save);
     return {
@@ -102,5 +111,37 @@ export class UserService {
     await this.userRepository.delete(id);
 
     return `This action removes a #${id} user`;
+  }
+
+  async forgotPassword(email: string, forgotPassword: ForgotPasswordDto) {
+    //buscar ususario por email
+    const emailExists = await this.userRepository.findOne({
+      where: { email: email },
+    });
+
+    console.log(emailExists);
+
+    //si existe no retorne mensaje de lo contrario retorna un mensaje indicando que no  existe el usuario
+    if (!emailExists) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        message: 'user not found',
+      };
+    }
+
+    //gernar un salt osea una encryptacion
+    const salt = await genSalt(10);
+
+    //instanciamos la entity de usuario
+    const user = new UserEntity();
+    user.password = await hash(forgotPassword.password, salt);
+
+    //actualizamos la contraseña del usuario
+    await this.userRepository.update(emailExists.id, user);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'user change password success',
+    };
   }
 }
