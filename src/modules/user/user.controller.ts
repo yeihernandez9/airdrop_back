@@ -16,6 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../role/guards/role.guards';
 import { Roles } from '../role/decorators/role.decorators';
+import { ForgotPasswordDto } from './dto/forgot-password';
 
 @Controller('user')
 export class UserController {
@@ -52,5 +53,14 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
+  }
+
+  @Patch('/forgot/:email')
+  @UsePipes(ValidationPipe)
+  forgotPassword(
+    @Param('email') email: string,
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ) {
+    return this.userService.forgotPassword(email, forgotPasswordDto);
   }
 }

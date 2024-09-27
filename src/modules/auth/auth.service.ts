@@ -40,7 +40,10 @@ export class AuthService {
     const isMatch = await compare(password, user.password);
 
     if (!isMatch) {
-      throw new Error('invalid credentials');
+      return {
+        status: HttpStatus.FOUND,
+        message: 'invalid credentials',
+      };
     }
 
     delete user.password;

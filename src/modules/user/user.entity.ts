@@ -4,12 +4,15 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { RoleEntity } from '../role/role.entity';
+import { UserDetailsEntity } from './user.details.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -33,4 +36,12 @@ export class UserEntity {
   @ManyToMany((type) => RoleEntity, (role) => role.users, { eager: true })
   @JoinTable({ name: 'user_roles' })
   roles: RoleEntity[];
+
+  @OneToOne((type) => UserDetailsEntity, {
+    cascade: true,
+    nullable: true,
+    eager: true,
+  })
+  @JoinColumn({ name: 'datail_id' })
+  details: UserDetailsEntity;
 }
