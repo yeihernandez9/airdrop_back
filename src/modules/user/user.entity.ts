@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 import { RoleEntity } from '../role/role.entity';
 import { UserDetailsEntity } from './user.details.entity';
+import { WalletEntity } from '../wallet/wallet.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -44,4 +45,12 @@ export class UserEntity {
   })
   @JoinColumn({ name: 'datail_id' })
   details: UserDetailsEntity;
+
+  @OneToOne((type) => WalletEntity, {
+    cascade: true,
+    nullable: true,
+    eager: true,
+  })
+  @JoinColumn({ name: 'wallet_id' })
+  wallet: WalletEntity;
 }

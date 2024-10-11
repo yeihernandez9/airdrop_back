@@ -9,6 +9,9 @@ import { RoleEntity } from '../role/role.entity';
 import { RoleType } from '../role/role.type';
 import { ForgotPasswordDto } from './dto/forgot-password';
 import { UserDetailsEntity } from './user.details.entity';
+import { WalletEntity } from '../wallet/wallet.entity';
+import { ethers } from 'ethers';
+import { withLatestFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -49,7 +52,16 @@ export class UserService {
     const salt = await genSalt(10);
     user.password = await hash(createUserDto.password, salt);
 
+    const wallet = await this.createWallet('loquesa');
+    console.log(wallet.address);
+
+    const walletEntity = new WalletEntity();
+    walletEntity.address = wallet.address;
+    walletEntity.prvate_key = wallet.private_key;
+    walletEntity.password = await hash(createUserDto.password, salt);
+
     user.roles = [defaultRole];
+    user.wallet = walletEntity;
 
     const save = this.userRepository.save(user);
 
@@ -142,6 +154,15 @@ export class UserService {
     return {
       status: HttpStatus.OK,
       message: 'user change password success',
+    };
+  }
+
+  async createWallet(password: string): Promise<any> {
+    const wallet = ethers.Wallet.createRandom();
+    return {
+      address: wallet.address,
+      private_key: wallet.privateKey,
+      password,
     };
   }
 }

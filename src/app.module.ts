@@ -9,9 +9,10 @@ import { ConfigService } from './config/config.service';
 import { Configuration } from './config/config.key';
 import { AuthModule } from './modules/auth/auth.module';
 import { SharedModule } from './shared/shared.module';
+import { WalletModule } from './modules/wallet/wallet.module';
 
 @Module({
-  imports: [ConfigModule, ConfigdbModule, UserModule, RoleModule, AuthModule, SharedModule],
+  imports: [ConfigModule, ConfigdbModule, UserModule, RoleModule, AuthModule, SharedModule, WalletModule],
   controllers: [AppController],
   providers: [AppService],
 })
