@@ -78,6 +78,8 @@ export class UserService {
 
     users.forEach((user) => {
       delete user.password;
+      delete user.wallet.password;
+      delete user.wallet.prvate_key;
     });
 
     return users;
