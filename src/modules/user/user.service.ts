@@ -167,4 +167,36 @@ export class UserService {
       password,
     };
   }
+
+  async setRoleToUser(userId: string, roleId: string) {
+    const userExist = await this.userRepository.findOne({
+      where: { id: userId, status: 'ACTIVE' },
+    });
+
+    if (!userExist) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        message: 'user not found',
+      };
+    }
+
+    const roleExist = await this._roleRepository.findOne({
+      where: { id: roleId },
+    });
+
+    if (!roleExist) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        message: 'role not found',
+      };
+    }
+
+    userExist.roles.push(roleExist);
+    await this.userRepository.save(userExist);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'role assign success',
+    };
+  }
 }

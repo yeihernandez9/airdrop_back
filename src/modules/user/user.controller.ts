@@ -9,6 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -62,5 +63,13 @@ export class UserController {
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ) {
     return this.userService.forgotPassword(email, forgotPasswordDto);
+  }
+
+  @Post('/setRole/:userId/:roleId')
+  async setRoleToUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('roleId', ParseUUIDPipe) roleId: string,
+  ){
+    return this.userService.setRoleToUser(userId, roleId);
   }
 }
