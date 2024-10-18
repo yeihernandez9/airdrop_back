@@ -30,9 +30,7 @@ export class RoleService {
   }
 
   async findAll() {
-    const roles = await this._roleRepository.find({
-      where: { status: 'ACTIVE' },
-    });
+    const roles = await this._roleRepository.find();
     return roles;
   }
 
