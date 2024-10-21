@@ -99,18 +99,43 @@ export class UserService {
     return userExist;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const { username } = updateUserDto;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+    // Step 1: Obtener el usuario existente
     const userExist = await this.userRepository.findOne({
       where: { id },
     });
+
+    console.log(userExist);
 
     if (!userExist) {
       throw new ConflictException('User not found');
     }
 
-    await this.userRepository.update(id, { username: username });
-    return `This action updates a #${id} user`;
+    // Step 2: Actualizar los campos del usuario
+    if (updateUserDto.username) {
+      userExist.username = updateUserDto.username;
+    }
+    if (updateUserDto.email) {
+      userExist.email = updateUserDto.email;
+    }
+    if (updateUserDto.details) {
+      console.log('USER DETAILL::::::', updateUserDto.details);
+      if (updateUserDto.details.name) {
+        userExist.details.name = updateUserDto.details.name;
+      }
+      if (updateUserDto.details.lastname) {
+        userExist.details.lastname = updateUserDto.details.lastname;
+      }
+      if (updateUserDto.details.phone) {
+        userExist.details.phone = updateUserDto.details.phone;
+      }
+    }
+
+    // Step 3: Guardar los cambios
+    const updatedUser = await this.userRepository.save(userExist);
+
+    // Retornar el usuario actualizado
+    return updatedUser;
   }
 
   async remove(id: string) {

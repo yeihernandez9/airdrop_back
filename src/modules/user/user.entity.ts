@@ -42,6 +42,7 @@ export class UserEntity {
     cascade: true,
     nullable: true,
     eager: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'datail_id' })
   details: UserDetailsEntity;
@@ -50,6 +51,7 @@ export class UserEntity {
     cascade: true,
     nullable: true,
     eager: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'wallet_id' })
   wallet: WalletEntity;
