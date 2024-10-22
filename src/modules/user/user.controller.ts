@@ -31,18 +31,22 @@ export class UserController {
   }
 
   @Get()
-  @Roles('USER', 'ADMIN', 'SUPER_ADMIN')
+  @Roles('ADMIN', 'SUPER_ADMIN')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
   @Patch(':id')
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
   @UsePipes(ValidationPipe)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
@@ -50,7 +54,7 @@ export class UserController {
 
   @Delete(':id')
   @Get()
-  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Roles('SUPER_ADMIN')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
@@ -65,7 +69,11 @@ export class UserController {
     return this.userService.forgotPassword(email, forgotPasswordDto);
   }
 
+
+  //servicio para asignar un rol a un usuario
   @Post('/setRole/:userId/:roleId')
+  @Roles('SUPER_ADMIN')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
   async setRoleToUser(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Param('roleId', ParseUUIDPipe) roleId: string,
