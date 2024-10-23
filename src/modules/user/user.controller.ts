@@ -38,7 +38,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Roles('USER', 'ADMIN', 'SUPER_ADMIN')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
