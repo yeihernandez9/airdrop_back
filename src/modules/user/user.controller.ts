@@ -80,4 +80,9 @@ export class UserController {
   ){
     return this.userService.setRoleToUser(userId, roleId);
   }
+
+  @Get('/reference/:id')
+  findOneReference(@Param('id') id: string) {
+    return this.userService.findOneReference(id);
+  }
 }

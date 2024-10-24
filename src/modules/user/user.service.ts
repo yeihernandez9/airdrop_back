@@ -224,4 +224,21 @@ export class UserService {
       message: 'role assign success',
     };
   }
+
+  async findOneReference(id: string) {
+    const userExist = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!userExist) {
+      throw new ConflictException('User not found');
+    }
+    delete userExist.details;
+    delete userExist.roles;
+    delete userExist.password;
+    delete userExist.wallet.password;
+    delete userExist.wallet.prvate_key;
+
+    return userExist;
+  }
 }
