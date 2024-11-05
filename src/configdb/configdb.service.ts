@@ -34,7 +34,8 @@ export class ConfigdbService implements TypeOrmOptionsFactory {
       return `${process.env.DATABASE_URL}`;
     } else {
       console.log('Base de datos DEV');
-      return `postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}?${sslOptions}`;
+      console.log(process.env.DB_PASSWD);
+      return `postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}?${sslOptions}`;
     }
   }
 }
